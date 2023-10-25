@@ -8,6 +8,7 @@ from pyttsx3 import init
 import pytz
 import threading
 from tkinter import ttk  # This imports the ttk module
+from playsound import playsound
 
 master = Tk()
 master.title("Pikachu Clock")
@@ -48,8 +49,6 @@ canvas.create_image(0, 0, anchor="nw", image=background_image1)
 # Digital time clock
 time_label = Label(master, font=('Helvetica', 24), bg='black', fg='white')  # Set the background to black and font color to white
 time_label.pack()
-
-
 
 
 # digital time clock
@@ -144,7 +143,7 @@ def show_world_clocks():
 
 def check_alarm_tone_path():
     """to ensure that the audio path file really exist"""
-    tones = ["alarm.mp3", "ringtone.mp3", "tic-tac.mp3"]
+    tones = ["clock-alarm-8761", "ringtone-126505.mp3", "tic-tac-27828.mp3"]
     for tone in tones:
         if not os.path.isfile(tone):
             print(f"Warning: Audio file {tone} does not exist. Please provide the correct path.")
@@ -168,10 +167,38 @@ def open_alarm_settings():
         elif am_pm == "AM" and alarm_hour_val == "12":
             alarm_hour_val = "00"
 
-        alarm_time = f"{alarm_hour_val}:{alarm_minute_val}"  # in the 24-hours format
+        alarm_time = f"{alarm_hour_val}:{alarm_minute_val}:00"  # in the 24-hours format
         snooze_duration = snooze_duration_entry.get()  # get the snooze time that user inputs
+        print("alarm time:",alarm_time,"; snooze duration:", snooze_duration)
+        
+        # set the alarm:
+        try:
+            datetime.strptime(alarm_time, "%H:%M:%S")
+            # Create a thread to run the alarm function
+            alarm_thread = threading.Thread(target=lambda: run_alarm(alarm_time)) # add further args if needed
+            # doing the same without a lambda function:
+            # alarm_thread = threading.Thread(target=run_alarm, args=(alarm_time,)) 
+           
+            alarm_thread.start()
+        except ValueError:
+            print("Invalid time format. Please use HH:MM:SS format.")
+        
+        alarm_settings.destroy()  # close the setting windows
+        
 
-        #alarm_settings.destroy()  # close the setting windows
+    # Function to run the alarm in a separate thread
+    def run_alarm(alarm_time):
+        while True:
+            current_time = datetime.now().strftime("%H:%M:%S")
+            if current_time == alarm_time:
+                print("Time to wake up!")
+                #choose which mp3 or synthesised text to play:
+                playsound(alarm_tone)
+                break
+            time.sleep(1)
+        
+
+        
 
     alarm_settings = Toplevel(master)  # create a new window
     alarm_settings.title("Set Alarm")
@@ -206,25 +233,11 @@ def open_alarm_settings():
     snooze_duration_entry.insert(0, "5")  # initialize it to be 5 min
 
     # save the button
-    ttk.Button(alarm_settings, text="Save Alarm", command=save_alarm).pack(pady=10)
+    ttk.Button(alarm_settings, text="Save Alarm", command=lambda:save_alarm()).pack(pady=10)
 
     alarm_settings.mainloop()
 
-def set_alarm():
-    #global snooze_time, alarm_time, alarm_tone
-    while True:
-        now = datetime.now()
-        current_time = now.strftime("%H:%M")
 
-        if current_time == alarm_time:
-            print("Alarm ringing...")
-            if check_alarm_tone_path():
-                playsound(alarm_tone)
-                #I think it should play the sound but not
-            snooze_time = now
-            break
-
-        time.sleep(30)
 
 def snooze_alarm():
     global snooze_time, alarm_time
@@ -236,9 +249,10 @@ def snooze_alarm():
     else:
         print("No alarm to snooze.")
 
-def start_alarm_thread():
+
+"""def start_alarm_thread():
     alarm_thread = threading.Thread(target=set_alarm)
-    alarm_thread.start()
+    alarm_thread.start()"""
 
 # Create an instance of Frame in the 'master' window
 frame = Frame(master)
@@ -264,10 +278,6 @@ alarm_button.pack(side='left', padx=10)  # Add some padding to separate the butt
 # Move the 'Switch Style' button to be on the same line as the digital time
 style_button = Button(master, text='Switch Style', command=switch_clock_style, font=('Helvetica', 24), bg='black', fg='white')
 style_button.pack(pady=10)  # Add some padding to separate the button from the digital time
-
-
-
-
 
 
 # Update the pointer
