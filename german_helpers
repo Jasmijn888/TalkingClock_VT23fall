@@ -54,7 +54,7 @@ def play_sound_german():
     hours = slice_silence_german("hours_German.wav")
     minutes = slice_silence_german("minutes_German.wav")
     indication = slice_silence_german("am_pm_German.wav")
-    sound = mixer.Sound(combine_audio_english(hours, minutes, indication))
+    sound = mixer.Sound(combine_audio_german(hours, minutes, indication))
     sound.play()
     
 play_sound_german()
