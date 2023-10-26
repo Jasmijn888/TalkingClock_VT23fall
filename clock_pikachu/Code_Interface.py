@@ -8,13 +8,15 @@ from pyttsx3 import init
 import pytz
 import threading
 from tkinter import ttk  # This imports the ttk module
+from english_helpers import get_current_time, slice_silence_english, combine_audio_english
+from play_sound import play_sound_english
 from playsound import playsound
 
 master = Tk()
 master.title("Pikachu Clock")
 
 # Set the background color of the entire clock to black
-master.configure(bg="black")  
+master.configure(bg="black")
 
 #Background pictures
 background_image1 = Image.open("pikaqiu.png")
@@ -35,11 +37,6 @@ def switch_clock_style():
         canvas.create_image(0, 0, anchor="nw", image=background_image1)
         current_style = 1
 
-# Switch style Button
-"""style_button = Button(master, text='Switch Style', command=switch_clock_style, font=('Helvetica', 24), bg='light goldenrod')
-style_button.pack()"""
-
-
 # Adjust the place of pictures
 canvas = Canvas(master, bg="black", width=480, height=450)
 canvas.pack(pady=20)  # Add some padding to separate the canvas from the buttons
@@ -49,6 +46,8 @@ canvas.create_image(0, 0, anchor="nw", image=background_image1)
 # Digital time clock
 time_label = Label(master, font=('Helvetica', 24), bg='black', fg='white')  # Set the background to black and font color to white
 time_label.pack()
+
+
 
 
 # digital time clock
@@ -98,11 +97,11 @@ def update_clock_pointer():
 
 #Speak time
 def speak_time():
-    now = datetime.now()
-    speaking_time = now.strftime("%I:%M %p")
+    """
+    use self-made wav file to speak the time
+    """
+    play_sound_english()
 
-    engine.say(f"The current time is {speaking_time}")
-    engine.runAndWait()
 
 #World clock
 def show_world_clocks():
@@ -130,20 +129,20 @@ def show_world_clocks():
             tz = pytz.timezone(tz_name)
             current_time = datetime.now(tz).strftime("%I:%M:%S %p")
             world_clock_labels[location].config(text=f"{location}: {current_time}")
-        # 继续定期调用update_clocks
+        
         master.after(1000, update_clocks)
 
-    # 在按钮点击后立即开始更新
+    # update the clock as long as the button being clicked
     update_clocks()
 
-    # 启动一个线程来更新时钟
+    # start a thread to update the time
     update_thread = threading.Thread(target=update_clocks)
     update_thread.daemon = True
     update_thread.start()
 
 def check_alarm_tone_path():
     """to ensure that the audio path file really exist"""
-    tones = ["clock-alarm-8761", "ringtone-126505.mp3", "tic-tac-27828.mp3"]
+    tones = ["alarm.mp3", "ringtone.mp3", "tic-tac.mp3"]
     for tone in tones:
         if not os.path.isfile(tone):
             print(f"Warning: Audio file {tone} does not exist. Please provide the correct path.")
@@ -155,7 +154,7 @@ def open_alarm_settings():
     """let user set alarm time and save it in a new setting frame,
     add snooze time function"""
     def save_alarm():
-        global alarm_time, alarm_tone, snooze_duration  
+        global alarm_time, alarm_tone
         # use globle var to store alarm setting values
         alarm_hour_val = alarm_hour.get()
         alarm_minute_val = alarm_minute.get()
@@ -168,8 +167,7 @@ def open_alarm_settings():
             alarm_hour_val = "00"
 
         alarm_time = f"{alarm_hour_val}:{alarm_minute_val}:00"  # in the 24-hours format
-        snooze_duration = snooze_duration_entry.get()  # get the snooze time that user inputs
-        print("alarm time:",alarm_time,"; snooze duration:", snooze_duration)
+        print("alarm time:",alarm_time)
         
         # set the alarm:
         try:
@@ -196,9 +194,6 @@ def open_alarm_settings():
                 playsound(alarm_tone)
                 break
             time.sleep(1)
-        
-
-        
 
     alarm_settings = Toplevel(master)  # create a new window
     alarm_settings.title("Set Alarm")
@@ -233,26 +228,68 @@ def open_alarm_settings():
     snooze_duration_entry.insert(0, "5")  # initialize it to be 5 min
 
     # save the button
-    ttk.Button(alarm_settings, text="Save Alarm", command=lambda:save_alarm()).pack(pady=10)
+    ttk.Button(alarm_settings, text="Save Alarm", command=save_alarm).pack(pady=10)
 
     alarm_settings.mainloop()
 
+def set_alarm():
+    #global snooze_time, alarm_time, alarm_tone
+    while True:
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+
+        if current_time == alarm_time:
+            print("Alarm ringing...")
+            if check_alarm_tone_path():
+                playsound(alarm_tone)
+                #I think it should play the sound but not
+            snooze_time = now
+            break
+
+        time.sleep(30)
 
 
-def snooze_alarm():
-    global snooze_time, alarm_time
-    if snooze_time:
-        snooze_minutes = int(snooze_duration.get())  
-        snooze_time = datetime.now() + timedelta(minutes=snooze_minutes)
-        alarm_time = (datetime.now() + timedelta(minutes=snooze_minutes)).strftime("%H:%M")
-        print(f"Snoozed for {snooze_minutes} minutes...")
-    else:
-        print("No alarm to snooze.")
 
-
-"""def start_alarm_thread():
+def start_alarm_thread():
+    """for snooze time function"""
     alarm_thread = threading.Thread(target=set_alarm)
-    alarm_thread.start()"""
+    alarm_thread.start()
+
+def countdown_timer(snooze_seconds):
+    """
+    run a count down，and play the ring sound after it
+    :param snooze_seconds: int ()  in second
+    """
+    while snooze_seconds:
+        # update the remaining time
+        print(f"Time remaining: {snooze_seconds} seconds") 
+        time.sleep(1)  # wait for one second
+        snooze_seconds -= 1
+
+    # now play the sound
+    ## I think it is where it doesn't work
+    print("Time's up! Playing alarm sound...")
+    playsound(alarm_tone)  
+
+    # show a message box to tell the user that the snooze time already finished,
+    # but it doesn't work
+    messagebox.showinfo("Alarm Notification", "Time's up! Wake up!")
+
+def on_snooze_button_clicked():
+    global snooze_duration  # make sure we can access global para: snooze_duration
+
+    # to check if the snooze time already set
+    if snooze_duration and int(snooze_duration) > 0:
+        snooze_seconds = int(snooze_duration) * 60  # change it to seconds, users input in minute
+        print(f"Snooze for {snooze_duration} minutes activated.")
+
+        # create a new tread to process the count-down，to ensure it wont obstruct main thread of GUI 线程
+        countdown_thread = threading.Thread(target=countdown_timer, args=(snooze_seconds,))
+        countdown_thread.daemon = False  # set it as false
+        countdown_thread.start()  # start the thread
+    else:
+        print("Snooze duration not set or invalid. Please set a valid snooze time first.")
+        
 
 # Create an instance of Frame in the 'master' window
 frame = Frame(master)
@@ -279,9 +316,8 @@ alarm_button.pack(side='left', padx=10)  # Add some padding to separate the butt
 style_button = Button(master, text='Switch Style', command=switch_clock_style, font=('Helvetica', 24), bg='black', fg='white')
 style_button.pack(pady=10)  # Add some padding to separate the button from the digital time
 
-
 # Update the pointer
 update_clock_pointer()
 
-# 启动窗口循环
+
 master.mainloop()
