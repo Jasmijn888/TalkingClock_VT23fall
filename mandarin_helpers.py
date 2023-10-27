@@ -57,5 +57,4 @@ def play_sound_mandarin():
     minutes = slice_silence_mandarin("minutes_Mandarin.wav")
     sound = mixer.Sound(combine_audio_mandarin(indication, hours, minutes))
     sound.play()
-    
-play_sound_mandarin()
+
