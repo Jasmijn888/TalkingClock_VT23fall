@@ -9,7 +9,7 @@ def get_current_time():
     split_time = replace_time.split(" ")
     return int(split_time[0]), int(split_time[1]), str(split_time[2])
 
-# Takes variable of audio file for English, determines length, and returns audio clip based on time-turned-index
+# Takes variable of audio file for German, determines length, and returns audio clip based on time-turned-index
 def slice_silence_german(audio_file):
     hour, minute, indication = get_current_time()
     audio = AudioSegment.from_wav(audio_file)
@@ -35,7 +35,7 @@ def slice_silence_german(audio_file):
             part.export("sound_3.wav", format="wav")
             return "sound_3.wav"
 
-# Takes 3 audio files, and constructs them based on English conventions
+# Takes 3 audio files, and constructs them based on German conventions
 def combine_audio_english(audio_1, audio_2, audio_3):
     sound1 = AudioSegment.from_file(audio_1, format="wav")
     sound2 = AudioSegment.from_file(audio_2, format="wav")
