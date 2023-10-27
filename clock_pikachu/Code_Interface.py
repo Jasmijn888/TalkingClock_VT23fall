@@ -19,10 +19,10 @@ master.title("Pikachu Clock")
 master.configure(bg="black")
 
 #Background pictures
-background_image1 = Image.open("pikaqiu.png")
+background_image1 = Image.open("bg1.png")
 background_image1 = ImageTk.PhotoImage(background_image1)
-background_image2 = Image.open('class.jpg')
-background_image2 = background_image2.resize((480, 480))
+background_image2 = Image.open('bg2.png')
+background_image2 = background_image2.resize((700, 700))
 background_image2 = ImageTk.PhotoImage(background_image2)
 
 
@@ -38,7 +38,7 @@ def switch_clock_style():
         current_style = 1
 
 # Adjust the place of pictures
-canvas = Canvas(master, bg="black", width=480, height=450)
+canvas = Canvas(master, bg="black", width=720, height=600)
 canvas.pack(pady=20)  # Add some padding to separate the canvas from the buttons
 
 canvas.create_image(0, 0, anchor="nw", image=background_image1)
@@ -72,13 +72,13 @@ def update_clock_pointer():
 
 
     # Three pointers' middle place
-    center_x = 237
-    center_y = 237
+    center_x = 362
+    center_y = 365
 
     # Length of three hands
-    hour_length = 130
-    minute_length = 200
-    second_length = 200
+    hour_length = 60
+    minute_length = 100
+    second_length = 150
     hour_x = center_x + hour_length * cos(radians(hour_angle))
     hour_y = center_y - hour_length * sin(radians(hour_angle))
     minute_x = center_x + minute_length * cos(radians(minute_angle))
@@ -90,9 +90,9 @@ def update_clock_pointer():
     canvas.delete("pointer")
 
     # Paint hands
-    canvas.create_line(center_x, center_y, hour_x, hour_y, width=4, fill='Crimson', tags="pointer")
-    canvas.create_line(center_x, center_y, minute_x, minute_y, width=4, fill='DodgerBlue', tags="pointer")
-    canvas.create_line(center_x, center_y, second_x, second_y, width=4, fill='LimeGreen', tags="pointer")
+    canvas.create_line(center_x, center_y, hour_x, hour_y, width=8, fill='Black', tags="pointer")
+    canvas.create_line(center_x, center_y, minute_x, minute_y, width=5, fill='Black', tags="pointer")
+    canvas.create_line(center_x, center_y, second_x, second_y, width=2, fill='Black', tags="pointer")
     master.after(1000, update_clock_pointer)
 
 #Speak time
