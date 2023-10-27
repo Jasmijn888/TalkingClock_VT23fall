@@ -57,4 +57,3 @@ def play_sound_german():
     sound = mixer.Sound(combine_audio_german(hours, minutes, indication))
     sound.play()
     
-play_sound_german()
