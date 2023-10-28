@@ -16,11 +16,7 @@ The following libraries / modules are required to successfully run the clock:
 ## Installation and Setup
  Before installation, make sure that:
  1. Python (3.10 or above) is installed on your device: https://www.python.org/downloads/
- 2. All required dependencies are installed on your device. To ensure that, run the following in your terminal / command prompt:
- 
- '''python
- pip install pillow pyttsx3 pytz playsound
- '''
+ 2. All required dependencies are installed on your device.
  
 ## Usage
 
@@ -56,4 +52,4 @@ The 'Set Alarm' button allows the user to set an alarm at the desired time, as w
 
 ###### Maria:
 - writing up documentation.
-- code copmmenting.
+- code commenting.
