@@ -1,0 +1,24 @@
+from pydub import AudioSegment
+from pydub.silence import split_on_silence
+
+# 输入的长音频文件名
+input_audio_file = "ampm.wav"
+
+# 读取音频文件
+audio = AudioSegment.from_file(input_audio_file)
+
+# 静音分割，以静音为切割点
+min_silence_len = 140 # 最小静音长度（毫秒）
+silence_threshold = -50 # 静音阈值（以dB计）
+audio_chunks = split_on_silence(audio, min_silence_len=min_silence_len, silence_thresh=silence_threshold)
+
+# 保存切割后的音频文件
+for i, chunk in enumerate(audio_chunks):
+# 生成输出文件名
+    output_file = f"output_chunk_{i + 1}.mp3"
+
+# 保存切割后的音频文件
+    chunk.export(output_file, format="mp3")
+    print(f"保存 {output_file}")
+
+    print("音频切割完成")
