@@ -22,6 +22,8 @@ The following libraries / modules are required to successfully run the clock:
 
 Once all necessary libraries are installed, the clock can be run by executing the python script in your terminal or IDE. The clock interface will appear, displaying the current time, and there are several buttons you can interact with to make use of the clock's features.
 
+Download final files folder and EN_slicing, CN_slicing, DE_slicing folders. Save the slicing folders within your downloaded final files folder and run the code on Python.
+
 ### Features
 
 #### Clock style:
