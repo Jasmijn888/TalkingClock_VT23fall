@@ -7,14 +7,13 @@ from math import sin, cos, radians
 from pyttsx3 import init
 import pytz
 import pygame
-
-
 import threading
 from tkinter import ttk  # This imports the ttk module
 import tkinter as tk
 
 pygame.mixer.init()
 
+# Create main Tkinter window
 master = Tk()
 master.title("Talking Clock")
 
@@ -27,11 +26,13 @@ background_image1 = ImageTk.PhotoImage(background_image1)
 background_image2 = Image.open('bg2.png')
 background_image2 = background_image2.resize((720, 730))
 background_image2 = ImageTk.PhotoImage(background_image2)
-
 current_style = 1
 
 
 def switch_clock_style():
+    '''
+    Switch the clock style between background images.
+    '''
     global current_style
     if current_style == 1:
         canvas.create_image(0, 0, anchor="nw", image=background_image2)
@@ -40,40 +41,40 @@ def switch_clock_style():
         canvas.create_image(0, 0, anchor="nw", image=background_image1)
         current_style = 1
 
-# Adjust the place of pictures
+# Create a canvas and display background images
 canvas = Canvas(master, bg="black", width=720, height=600)
 canvas.pack(pady=20)  # Add some padding to separate the canvas from the buttons
 
 canvas.create_image(0, 0, anchor="nw", image=background_image1)
 
-# Digital time clock
+# Create a frame to separate the digital clock from other elements
 spacer_frame = Frame(master, bg='black')
 spacer_frame.pack(fill='x', pady=0)
-# digital time clock
+
+# Create a label to display the digital time
 time_label = Label(master, font=('Helvetica', 30), bg='white')
 time_label.pack()
 
-# Initialize the text-to-speech engine from pyttsx3
-#engine = init()
 
-
-
-
-# time zone by default
+# Set default time zone to Shanghai
 selected_timezone = "Asia/Shanghai"
 
-# function: time zone selection
 def select_timezone(value):
+    '''
+    Update time zone selection.
+    '''
     global selected_timezone
     selected_timezone = value
     update_time()
 
 def open_alarm_settings():
-    """let user set alarm time and save it in a new setting frame,
-    add snooze time function"""
+    """
+    Open a window for setting the alarm time and configuring the alarm sound.
+    Additional option to set snooze time.
+    """
     def save_alarm():
         global alarm_time, alarm_tone
-        # use global var to store alarm setting values
+        # Use global var to store alarm setting values
         alarm_hour_val = alarm_hour.get()  # Assuming this is now in 24-hour format
         alarm_minute_val = alarm_minute.get()
         alarm_tone = alarm_tone_var.get()
@@ -81,7 +82,7 @@ def open_alarm_settings():
         alarm_time = f"{alarm_hour_val}:{alarm_minute_val}:00"  # in the 24-hours format
         print("Alarm time:", alarm_time)
 
-        # set the alarm:
+        # Set the alarm:
         try:
             datetime.strptime(alarm_time, "%H:%M:%S")
             # Create a thread to run the alarm function
@@ -105,19 +106,11 @@ def open_alarm_settings():
             current_time = datetime.now().strftime("%H:%M:%S")
             if current_time == alarm_time:
                 print("Time to Wake up!")
-                # Load your sound (alarm tone)
-                # Replace 'your_alarm_sound.mp3' with the path to your actual alarm sound file
+                # Load sound (alarm tone)
                 pygame.mixer.music.load(alarm_tone)  
                 # Play the sound
                 pygame.mixer.music.play()
-                
-                # You might want to add a delay for the duration of the alarm sound
-                # or handle it in some other way, so it doesn't repeat or cut off unexpectedly.
-                # time.sleep(duration_of_sound)
-                
-                # if you want to stop the sound, you can use
-                # pygame.mixer.music.stop()
-                
+                                
                 break  # Exit the loop once the alarm sound has been played
                 
             time.sleep(1)  # Check the current time every second
@@ -125,11 +118,11 @@ def open_alarm_settings():
     alarm_settings = Toplevel(master)  # create a new window
     alarm_settings.title("Set Alarm")
 
-    # create a new frame for all the setting components
+    # Create a new frame for all the setting components
     settings_frame = ttk.Frame(alarm_settings)
     settings_frame.pack(pady=10)
 
-    # place the components of the alarm function
+    # Add components for setting the alarm time
     alarm_hour = ttk.Combobox(settings_frame, values=[f"{i:02d}" for i in range(1, 25)], width=5)
     alarm_hour.set("1")
     alarm_hour.pack(side="left", padx=5)
@@ -139,15 +132,18 @@ def open_alarm_settings():
     alarm_minute.pack(side="left", padx=5)
 
 
-    # setting the components of ringtones
+    # Setting the components for choosing alarm ringtones
     alarm_tone_var = StringVar()
+
+    # Create buttons for different alarm tones
     ttk.Radiobutton(settings_frame, text="clock-alarm", value="clock-alarm-8761.mp3", variable=alarm_tone_var).pack(side="left", padx=5)
     ttk.Radiobutton(settings_frame, text="ringtone", value="ringtone-126505.mp3", variable=alarm_tone_var).pack(side="left", padx=5)
     ttk.Radiobutton(settings_frame, text="tic-tac", value="tic-tac-27828.mp3", variable=alarm_tone_var).pack(side="left", padx=5)
 
-    # save the button
+    # Create 'Save alarm' button
     ttk.Button(alarm_settings, text="Save Alarm", command=save_alarm).pack(pady=10)
 
+    # Alarm setting window main loop
     alarm_settings.mainloop()
 
 def set_alarm():
@@ -159,8 +155,7 @@ def set_alarm():
         if current_time == alarm_time:
             print("Alarm ringing...")
             if check_alarm_tone_path():
-                playsound(alarm_tone)
-                #I think it should play the sound but not           
+                playsound(alarm_tone)       
             break
 
         time.sleep(30)
@@ -168,20 +163,28 @@ def set_alarm():
 
 
 def start_alarm_thread():
-    """for snooze time function"""
+    """
+    Start a separate thread to handle the alarm.
+    """
     alarm_thread = threading.Thread(target=set_alarm)
     alarm_thread.start()
 
 
 def get_current_time():
+    '''
+    Get the current time based on the selected time zone.
+    '''
     now = datetime.now(pytz.timezone(selected_timezone))
     current_time = now.strftime("%H:%M:%S")
     return current_time
 
 def play_current_time_audio():
-    # 获取当前时间
+    '''
+    Play audio of current time.
+    '''
     global audio_folder
-    #berlin
+    
+    # Berlin
     if selected_timezone == "Europe/Berlin":
         current_time = datetime.now(pytz.timezone("Europe/Berlin")).time()
         hour = current_time.hour
@@ -217,7 +220,7 @@ def play_current_time_audio():
         while pygame.mixer.music.get_busy():
             time.sleep(1)
 
-    #Shanghai
+    # Shanghai
     if selected_timezone == "Asia/Shanghai":
         current_time = datetime.now(pytz.timezone("Asia/Shanghai")).time()
         hour = current_time.hour
@@ -249,12 +252,12 @@ def play_current_time_audio():
             pygame.mixer.music.load(min_path)
             pygame.mixer.music.play()
 
-            while pygame.mixer.music.get_busy():  # 确保音乐播放完毕
+            while pygame.mixer.music.get_busy():  
                     time.sleep(1)
 
 
 
-    #New_york
+    # New York
     if selected_timezone == "America/New_York":
         current_time = datetime.now(pytz.timezone("America/New_York")).time()
         hour = current_time.hour
@@ -290,7 +293,7 @@ def play_current_time_audio():
         while pygame.mixer.music.get_busy():
             time.sleep(1)
 
-    #local
+    # Local
     local = "Europe/Amsterdam"
     if selected_timezone == local:
         current_time = datetime.now(pytz.timezone("Europe/Amsterdam")).time()
@@ -331,66 +334,61 @@ def play_current_time_audio():
 
 # Create an instance of Frame in the 'master' window
 frame = Frame(master)
-frame.pack()  # This positions the frame within the 'master' window
+frame.pack() 
 
 
-
-
-
-#local time
-#local_time=time.localtime()
-
-# create time zone drop box
-
+# Create a dict of timezones with corresponding labels
 timezones = {"Asia/Shanghai": "Asia/Shanghai", "Europe/Berlin": "Europe/Berlin", "America/New_York": "America/New_York", "local":"Europe/Amsterdam"}
+
+# Create a StringVar to store the timezone and set it to the initial value
 timezone_var = tk.StringVar()
 timezone_var.set(selected_timezone)
+
+# Create an OptionMenu widget to display the list of timezones
 timezone_menu = tk.OptionMenu(frame, timezone_var, *timezones, command=lambda value: select_timezone(timezones[value]))
 timezone_menu.grid(row=1, column=0)
 
-# button for read the time
-#read_time_button = tk.Button(frame, text="Read the Time", command=read_time)
-#read_time_button.grid(row=1, column=1)
-###
+# Create a button to read the time
 read_time_button = tk.Button(frame, text="Read the Time", command=play_current_time_audio)
 read_time_button.grid(row=1, column=1)
 
-
-# button for alarm setting
+# Create a button to set the alarm
 set_alarm_button = tk.Button(frame, text="Set Alarm", command=open_alarm_settings)
 set_alarm_button.grid(row=1, column=2)
 
-
-
+# Create a button to switch clock styles
 style_button = tk.Button(frame, text='Switch Style', command=switch_clock_style)
 style_button.grid(row=0, column=0, columnspan=3)
 
-
-# function: update the time
 def update_time():
+    '''
+    Update the time and configure the time label.
+    '''
     current_time = get_current_time()
     time_label.config(text=current_time)
     master.after(1000, update_time)
 
 def update_clock_pointer():
+    '''
+    Update clock pointer based on selected timezone.
+    '''
     now = datetime.now(pytz.timezone(selected_timezone))
     current_time = now.time()
 
-    # pointer angel calculation
+    # Pointer angle calculation
     hours = current_time.hour
     minutes = current_time.minute
     seconds = current_time.second
 
-    # Angle of three hands
     hour_angle = 90 - (hours % 12 + minutes / 60) * 360 / 12
     minute_angle = 90 - minutes * 360 / 60
     second_angle = 90 - seconds * 360 / 60
 
-    # Three pointers' middle place
+    # Pointers' center
     center_x = 362
     center_y = 365
 
-    # Length of three hands
+    # Length of pointers
     hour_length = 60
     minute_length = 100
     second_length = 150
@@ -401,19 +399,21 @@ def update_clock_pointer():
     second_x = center_x + second_length * cos(radians(second_angle))
     second_y = center_y - second_length * sin(radians(second_angle))
 
-    # delete the old pointer
+    # Delete the old clock pointers
     canvas.delete("pointer")
 
-    # Paint hands
+    # Paint new clock pointers
     canvas.create_line(center_x, center_y, hour_x, hour_y, width=8, fill='Black', tags="pointer")
     canvas.create_line(center_x, center_y, minute_x, minute_y, width=5, fill='Black', tags="pointer")
     canvas.create_line(center_x, center_y, second_x, second_y, width=2, fill='Black', tags="pointer")
+
+    # Schedule function to be called agin after 1 second
     master.after(1000, update_clock_pointer)
 
-
+# Update time and clock pointers
 update_time()
 update_clock_pointer()
 
-# mainloop
+# Enter main loop for GUI application
 master.mainloop()
 
