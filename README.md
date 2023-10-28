@@ -1,24 +1,59 @@
-# TalkingClock_VT23fall
+# Talking Clock (VT23)
 
-### group assignment Talking Clock
+## Introduction
 
-#### Project Coordinator/Scrum Master (Jasmine):
-Responsible for overseeing the project timeline.
-Ensures adherence to the schedule by team members.
-Resolves any collaboration issues among team members.
-Assists in addressing cross-functional issues.
+This 'talking clock' provides an interface to a clock with several features. It was developed as the final assignment for the courses Introduction to Programming and Introduction to Voice Technology, part of RUG's MSc Voice Technology.
 
-#### Basic Clock Functionality and Audio Recording (Jocomin, Janice):
-Implement the core clock functionality that accurately displays the current time.
-Record audio files for time announcements (at a minimum in English, consider additional languages).
-Ensure the integration of audio into the clock application.
+## Dependencies
 
-#### Voice Integration and User Interface (Weihao, Qing):
-Integrate a text-to-speech library for automated voice output.
-Design and implement the user interface, allowing users to control the clock and customize settings.
-Add additional features, such as alarm, snooze functions, etc.
+The following libraries / modules are required to successfully run the clock:
+- tkinter: https://docs.python.org/3/library/tkinter.html
+- pillow: https://pillow.readthedocs.io/en/stable/
+- pyttsx3: https://pyttsx3.readthedocs.io/en/latest/
+- pytz: https://pythonhosted.org/pytz/
+- playsound: https://pypi.org/project/playsound/
+ 
+## Installation and Setup
+ Before installation, make sure that:
+ 1. Python (3.10 or above) is installed on your device: https://www.python.org/downloads/
+ 2. All required dependencies are installed on your device. To ensure that, run the following in your terminal / command prompt:
+ 
+ '''python
+ pip install pillow pyttsx3 pytz playsound
+ '''
+ 
+## Usage
 
-#### Error Handling and Documentation (Maria):
-Build mechanisms that handle user errors and unexpected inputs.
-Write installation instructions, user manuals, and technical documentation.
-Ensure the code is well-commented.
+Once all necessary libraries are installed, the clock can be run by executing the python script in your terminal or IDE. The clock interface will appear, displaying the current time, and there are several buttons you can interact with to make use of the clock's features.
+
+### Features
+
+#### Clock style:
+The graphical clock display has two face styles. These can be navigated via the button 'Switch style'.
+
+#### Read time aloud: 
+Using the 'Read time' button, the current time can be spoken out loud. For this, multiple languages are supported: Chinese, German, English.
+
+#### Time zone selection:
+The clock can be set up to display the current hour in a different time zone than the local one (e.g. Shanghai, Berlin). 
+
+#### Alarm setting:
+The 'Set Alarm' button allows the user to set an alarm at the desired time, as well as to choose the ringtone out of three options.
+
+## Authors and distribution of roles
+
+###### Jasmine:
+- overseeing project timeline and ensuring adherence to schedule.
+- addressing cross-functional issues.
+
+###### Jocomin and Janice:
+- implementing the core functionality of the clock.
+- audiofile recordings and integration of audio into the clock functionality.
+
+###### Weihao, Quing:
+- implementation of user interface and customization.
+- implementation and functionality of features.
+
+###### Maria:
+- writing up documentation.
+- code copmmenting.
