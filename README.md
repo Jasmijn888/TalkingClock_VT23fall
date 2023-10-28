@@ -46,7 +46,7 @@ The 'Set Alarm' button allows the user to set an alarm at the desired time, as w
 - implementing the core functionality of the clock.
 - audiofile recordings and integration of audio into the clock functionality.
 
-###### Weihao, Quing:
+###### Weihao, Qing:
 - implementation of user interface and customization.
 - implementation and functionality of features.
 
