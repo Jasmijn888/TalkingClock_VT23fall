@@ -106,43 +106,6 @@ def speak_time(language):
         play_sound_english()
 
 
-#World clock
-def show_world_clocks():
-    world_clock_window = Toplevel(master)
-    world_clock_window.title("World Clocks")
-
-    #Label Dict, including different time zones' lables
-    world_clock_labels = {}
-
-    # Add different places
-    timezones = {
-        'Netherlands': 'Europe/Amsterdam',
-        'China': 'Asia/Shanghai',
-        'USA': 'America/New_York',
-        'Romania': 'Europe/Bucharest'
-    }
-
-    for location, tz_name in timezones.items():
-        world_clock_labels[location] = Label(world_clock_window, font=('Helvetica', 16), bg='light blue')
-        world_clock_labels[location].pack()
-
-    # Update the world clocks
-    def update_clocks():
-        for location, tz_name in timezones.items():
-            tz = pytz.timezone(tz_name)
-            current_time = datetime.now(tz).strftime("%I:%M:%S %p")
-            world_clock_labels[location].config(text=f"{location}: {current_time}")
-        
-        master.after(1000, update_clocks)
-
-    # update the clock as long as the button being clicked
-    update_clocks()
-
-    # start a thread to update the time
-    update_thread = threading.Thread(target=update_clocks)
-    update_thread.daemon = True
-    update_thread.start()
-
 def check_alarm_tone_path():
     """to ensure that the audio path file really exist"""
     tones = ["alarm.mp3", "ringtone.mp3", "tic-tac.mp3"]
