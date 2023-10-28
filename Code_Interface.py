@@ -7,11 +7,12 @@ from pyttsx3 import init
 import pytz
 import threading
 from tkinter import ttk  # This imports the ttk module
-from english_helpers import get_current_time, slice_silence_english, combine_audio_english
-from german_helpers import play_sound_german
-from play_sound import play_sound_english
-from mandarin_helpers import play_sound_mandarin
-from playsound import playsound
+#from english_helpers import get_current_time, slice_silence_english, combine_audio_english
+#from german_helpers import play_sound_german
+#from play_sound import play_sound_english
+#from mandarin_helpers import play_sound_mandarin
+#from playsound import playsound
+import tkinter as tk
 
 master = Tk()
 master.title("Pikachu Clock")
@@ -25,7 +26,6 @@ background_image1 = ImageTk.PhotoImage(background_image1)
 background_image2 = Image.open('bg2.png')
 background_image2 = background_image2.resize((700, 700))
 background_image2 = ImageTk.PhotoImage(background_image2)
-
 
 current_style=1
 
